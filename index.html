@@ -4,42 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>纯静态HTML5网页阅读器</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            padding-top: 20px;
+            background-color: #f8f9fa;
         }
-        #book-list {
-            margin-bottom: 20px;
-        }
-        #content {
-            white-space: pre-wrap;
-            margin-top: 20px;
+        .container {
+            max-width: 800px;
         }
         .book-item {
             cursor: pointer;
             margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .book-item:hover {
+            background-color: #e9ecef;
+        }
+        #content {
+            margin-top: 20px;
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
-    <h1>图书列表</h1>
-    <div id="book-list"></div>
-    <h2>图书内容</h2>
-    <div id="content"></div>
+    <div class="container">
+        <h1 class="text-center mb-4">图书列表</h1>
+        <div id="book-list" class="list-group"></div>
+        <h2 class="text-center mt-5">图书内容</h2>
+        <div id="content" class="bg-white p-4 rounded shadow-sm"></div>
+    </div>
 
     <script>
-        // 获取图书列表并显示
+        // 获取根目录下的所有文件
         async function loadBooks() {
-            const response = await fetch('/books'); // 假设图书文件在仓库的/books目录下
+            const response = await fetch('/'); // 获取根目录下的文件列表
             const files = await response.json();
             const bookList = document.getElementById('book-list');
             files.forEach(file => {
                 if (file.name.endsWith('.txt')) { // 只显示TXT文件
-                    const bookItem = document.createElement('div');
-                    bookItem.classList.add('book-item');
+                    const bookItem = document.createElement('a');
+                    bookItem.classList.add('list-group-item', 'list-group-item-action', 'book-item');
                     bookItem.textContent = file.name;
-                    bookItem.addEventListener('click', () => loadBookContent(file.download_url));
+                    bookItem.href = '#';
+                    bookItem.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        loadBookContent(file.download_url);
+                    });
                     bookList.appendChild(bookItem);
                 }
             });
